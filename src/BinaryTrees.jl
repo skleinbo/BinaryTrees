@@ -3,7 +3,8 @@ module BinaryTrees
 export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild
 
 import AbstractTrees
-import AbstractTrees: children, nodevalue, parent, ParentLinks, PreOrderDFS, StoredParents
+import AbstractTrees: children, childtype, nextsibling, nodevalue, parent, ParentLinks, PreOrderDFS, prevsibling, StoredParents
+import AbstractTrees: NodeType, HasNodeType, nodetype
 import Base: show
 import SparseArrays: spzeros
 
@@ -18,6 +19,7 @@ mutable struct BinaryTree{T}
 end
 BinaryTree(v::T) where T = BinaryTree{T}(v, nothing, nothing, nothing)
 
+## AbstractTrees.jl interface ##
 function AbstractTrees.children(t::BinaryTree) 
     if isnothing(t.left) && isnothing(t.right)
         return ()
@@ -29,9 +31,16 @@ function AbstractTrees.children(t::BinaryTree)
         return (t.left, t.right)
     end
 end
+AbstractTrees.childtype(::Type{BinaryTree{T}}) where T = BinaryTree{T}
+AbstractTrees.nextsibling(t::BinaryTree) = isleftchild(t) ? children(parent(t))[2] : nothing
+AbstractTrees.prevsibling(t::BinaryTree) = isrightchild(t) ? children(parent(t))[1] : nothing
 AbstractTrees.nodevalue(t::BinaryTree) = t.val
 AbstractTrees.parent(t::BinaryTree) = t.parent
-AbstractTrees.ParentLinks(::Type{<:BinaryTree}) = AbstractTrees.StoredParents()
+AbstractTrees.ParentLinks(::Type{<:BinaryTree}) = StoredParents()
+AbstractTrees.NodeType(::Type{<:BinaryTree}) = HasNodeType()
+AbstractTrees.nodetype(::Type{BinaryTree{T}}) where T = BinaryTree{T} 
+
+## End Interface ##
 
 function child!(t::BinaryTree{T}, v::T, location::Symbol) where T
     newnode = BinaryTree(v)
