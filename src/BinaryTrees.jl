@@ -8,6 +8,13 @@ import AbstractTrees: NodeType, HasNodeType, nodetype
 import Base: show
 import SparseArrays: spzeros
 
+"""
+    BinaryTree{T}
+
+Stores a value of type `T` and a reference to a left/right child and parent of the same type.
+
+Implements the [`AbstractTrees.jl`](https://github.com/JuliaCollections/AbstractTrees.jl) interface
+"""
 mutable struct BinaryTree{T}
     val::T
     parent::Union{Nothing, BinaryTree{T}}
@@ -55,9 +62,34 @@ function child!(t::BinaryTree{T}, v::T, location::Symbol) where T
     return newnode
 end
 
+"""
+    left!(t, v)
+
+Create a new BinaryTree with nodevalue `v` and set it
+as the left child of `t`.
+
+See also: [`right!`](@ref)
+"""
 left!(t::BinaryTree{T}, v::T) where T = child!(t, v, :left)
+
+"""
+    right!(t, v)
+
+Create a new BinaryTree with nodevalue `v` and set it
+as the right child of `t`.
+
+See also: [`left!`](@ref)
+"""
 right!(t::BinaryTree{T}, v::T) where T = child!(t, v, :right)
 
+"""
+    sibling(t)
+
+Return the sibing node of `t` in a binary tree.
+If `t` has no parent or no sibling, `nothing` is returned.
+
+See also: [`nextsibling`](@ref), [`prevsibling`](@ref)
+"""
 function sibling(t::BinaryTree)
     p = parent(t)
     isnothing(p) && return nothing
@@ -66,20 +98,21 @@ function sibling(t::BinaryTree)
     return c[1]===t ? c[2] : c[1]
 end
 
+"Check if argument is the left child of its parent node."
 isleftchild(t::BinaryTree)  = !isnothing(parent(t)) && t===parent(t).left
+
+"Check if argument is the right child of its parent node."
 isrightchild(t::BinaryTree) = !isnothing(parent(t)) && t===parent(t).right
 
-function show(io::IO, ::MIME"text/plain", t::BinaryTree{T}) where T
-    print(io, "BinaryTree{$T} $(nodevalue(t)) $(objectid(t)) with $(length(children(t))) children")
-    if isnothing(parent(t))
-        print(io, " and no parent.")
-    else
-        print(io, ".")
-    end
-    print(io, "\n")
-    nothing
-end
+"""
+    adjacency_matrix(t)
 
+Return the adjacency matrix of the binary tree as a sparse matrix.
+
+Nodes are in pre-order.
+
+Useful for constructing a graph representation from `Graphs.jl`, and for visualization.
+"""
 function adjacency_matrix(t::BinaryTree)
     n = 0
     for _ in PreOrderDFS(t)
@@ -100,6 +133,17 @@ function adjacency_matrix(t::BinaryTree)
     end
 
     return A
+end
+
+function show(io::IO, ::MIME"text/plain", t::BinaryTree{T}) where T
+    print(io, "BinaryTree{$T} $(nodevalue(t)) $(objectid(t)) with $(length(children(t))) children")
+    if isnothing(parent(t))
+        print(io, " and no parent.")
+    else
+        print(io, ".")
+    end
+    print(io, "\n")
+    nothing
 end
 
 end # MODULE
