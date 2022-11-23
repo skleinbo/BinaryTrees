@@ -141,8 +141,8 @@ function adjacency_matrix(t::BinaryTree)
     return A
 end
 
-function show(io::IO, ::MIME"text/plain", t::BinaryTree{T}) where T
-    print(io, "BinaryTree{$T} $(nodevalue(t)) $(objectid(t)) with $(length(children(t))) children")
+function show(io::IO, t::BinaryTree{T}) where T
+    print(io, "BinaryTree{$T}($(nodevalue(t))) $(objectid(t)) with $(length(children(t))) children")
     if isnothing(parent(t))
         print(io, " and no parent.")
     else
