@@ -55,8 +55,8 @@ end
 
 ## End Interface ##
 
-function child!(t::BinaryTree{T}, v::T, location::Symbol) where T
-    newnode = BinaryTree(v)
+child!(t::BinaryTree{T}, v::T, location::Symbol) where T = child!(t, BinaryTree(v), location)
+function child!(t::BinaryTree{T}, newnode::BinaryTree{T}, location::Symbol) where T
     newnode.parent = t
     if location===:left
         t.left = newnode
@@ -76,7 +76,7 @@ as the left child of `t`.
 
 See also: [`right!`](@ref)
 """
-left!(t::BinaryTree{T}, v::T) where T = child!(t, v, :left)
+left!(t::BinaryTree{T}, v) where T = child!(t, v, :left)
 
 """
     right!(t, v)
@@ -86,7 +86,7 @@ as the right child of `t`.
 
 See also: [`left!`](@ref)
 """
-right!(t::BinaryTree{T}, v::T) where T = child!(t, v, :right)
+right!(t::BinaryTree{T}, v) where T = child!(t, v, :right)
 
 """
     sibling(t)
