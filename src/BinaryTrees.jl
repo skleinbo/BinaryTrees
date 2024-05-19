@@ -1,6 +1,6 @@
 module BinaryTrees
 
-export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild
+export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild, parent!
 
 import AbstractTrees
 import AbstractTrees: children, childtype, descendleft, nextsibling, nodevalue, parent, ParentLinks, PreOrderDFS, prevsibling, StoredParents
@@ -93,6 +93,35 @@ as the right child of `t`.
 See also: [`left!`](@ref)
 """
 right!(t::BinaryTree{T}, v) where T = child!(t, v, :right)
+
+"""
+    parent!(t, p, location={:left,:right})
+
+Set `t` as the child on the `location` of `p`. Unset `p` as child of previous parent.
+
+See also: [`left!`, `right!`](@ref)
+"""
+parent!(::Nothing, v, location) = nothing
+parent!(t::BinaryTree{T}, v::T, location::Symbol) where T = parent!(t, BinaryTree(v), location)
+function parent!(p::BinaryTree{T}, t::BinaryTree{T}, location) where T
+    if isleftchild(t)
+        parent(t).left = nothing
+    elseif isrightchild(t)
+        parent(t).right = nothing
+    end
+
+    if location == :left
+        p.left = t
+    elseif location == :right
+        p.right = t
+    else
+        error("`location` must be one of `:right`, `left`")
+    end
+
+    t.parent = p
+
+    nothing
+end
 
 """
     sibling(t)
