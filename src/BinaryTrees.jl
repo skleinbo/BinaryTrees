@@ -47,8 +47,14 @@ AbstractTrees.ParentLinks(::Type{<:BinaryTree}) = StoredParents()
 AbstractTrees.NodeType(::Type{<:BinaryTree}) = HasNodeType()
 AbstractTrees.nodetype(::Type{BinaryTree{T}}) where T = BinaryTree{T} 
 function AbstractTrees.descendleft(t::BinaryTree)
-    while !isnothing(t.left)
-        t = t.left
+    while true
+        if !isnothing(t.left)
+            t = t.left
+        elseif !isnothing(t.right)
+            t = t.right
+        else
+            break
+        end
     end
     t
 end
