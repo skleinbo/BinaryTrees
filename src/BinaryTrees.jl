@@ -39,6 +39,16 @@ function AbstractTrees.children(t::BinaryTree)
     end
 end
 AbstractTrees.childtype(::Type{BinaryTree{T}}) where T = BinaryTree{T}
+AbstractTrees.childtype(::BinaryTree{T}) where T = BinaryTree{T}
+function AbstractTrees.childrentype(t::BinaryTree{T}) where T
+    if isnothing(t.left) && isnothing(t.right)
+        return Tuple{}
+    elseif isnothing(t.right) || isnothing(t.left)
+        return Tuple{BinaryTree{T}}
+    else
+        return Tuple{BinaryTree{T}, BinaryTree{T}}
+    end
+end
 AbstractTrees.nextsibling(t::BinaryTree) = isleftchild(t) ? children(parent(t))[2] : nothing
 AbstractTrees.prevsibling(t::BinaryTree) = isrightchild(t) ? children(parent(t))[1] : nothing
 AbstractTrees.nodevalue(t::BinaryTree) = t.val
