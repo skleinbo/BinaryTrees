@@ -1,6 +1,6 @@
 module BinaryTrees
 
-export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild, parent!
+export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild, parent!, nchildren
 
 import AbstractTrees
 import AbstractTrees: children, childtype, descendleft, nextsibling, nodevalue, parent, ParentLinks, PreOrderDFS, prevsibling, StoredParents
@@ -136,7 +136,7 @@ end
 """
     sibling(t)
 
-Return the sibing node of `t` in a binary tree.
+Return the sibling node of `t` in a binary tree.
 If `t` has no parent or no sibling, `nothing` is returned.
 
 See also: [`nextsibling`](@ref), [`prevsibling`](@ref)
@@ -154,6 +154,8 @@ isleftchild(t::BinaryTree)  = !isnothing(parent(t)) && t===parent(t).left
 
 "Check if argument is the right child of its parent node."
 isrightchild(t::BinaryTree) = !isnothing(parent(t)) && t===parent(t).right
+
+nchildren(t::BinaryTree) = !isnothing(t.left) + !isnothing(t.right)
 
 """
     adjacency_matrix(t)
