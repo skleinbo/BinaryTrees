@@ -1,6 +1,6 @@
 module BinaryTrees
 
-export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild, parent!, nchildren
+export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild, isrightchild, isleaf, parent!, nchildren
 
 import AbstractTrees
 import AbstractTrees: children, childtype, descendleft, nextsibling, nodevalue, parent, ParentLinks, PreOrderDFS, prevsibling, StoredParents
@@ -156,6 +156,8 @@ isleftchild(t::BinaryTree)  = !isnothing(parent(t)) && t===parent(t).left
 isrightchild(t::BinaryTree) = !isnothing(parent(t)) && t===parent(t).right
 
 nchildren(t::BinaryTree) = !isnothing(t.left) + !isnothing(t.right)
+
+isleaf(t::BinaryTree) = isnothing(t.left) && isnothing(t.right)
 
 """
     adjacency_matrix(t)
