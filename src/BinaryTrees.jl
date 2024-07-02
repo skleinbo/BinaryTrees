@@ -220,7 +220,7 @@ function adjacency_matrix(t::BinaryTree)
 end
 
 function show(io::IO, t::BinaryTree{T}) where T
-    print(io, "BinaryTree{$T}($(nodevalue(t))) $(objectid(t)) with $(length(children(t))) children")
+    print(io, "($(nodevalue(t))) $(string(objectid(t), base=16)) with $(length(children(t))) children")
     if isnothing(parent(t))
         print(io, " and no parent.")
     else
