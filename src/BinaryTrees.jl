@@ -5,7 +5,7 @@ export adjacency_matrix, BinaryTree, child!, left!, right!, sibling, isleftchild
 import AbstractTrees
 import AbstractTrees: children, childtype, descendleft, nextsibling, nodevalue, parent, ParentLinks, PreOrderDFS, prevsibling, StoredParents
 import AbstractTrees: NodeType, HasNodeType, nodetype
-import Base: show
+import Base: iterate, SizeUnknown, IteratorSize, IteratorEltype, HasEltype, eltype, show
 import SparseArrays: spzeros
 
 """
@@ -70,6 +70,35 @@ function AbstractTrees.descendleft(t::BinaryTree)
 end
 
 ## End Interface ##
+
+## Iteration iterface   ##
+## Post-order iteration ##
+
+function Base.iterate(p::BinaryTree{T}) where T
+    cursor = descendleft(p)
+    return (cursor, cursor)::Tuple{BinaryTree{T}, BinaryTree{T}}
+end
+function Base.iterate(p::BinaryTree{T}, cursor::BinaryTree{T}) where T
+    if p === cursor 
+        return nothing
+    end
+
+    pa::BinaryTree = parent(cursor)
+    if isrightchild(cursor)
+        return (pa, pa)::Tuple{BinaryTree{T}, BinaryTree{T}}
+    end
+    if !isnothing(pa.right)
+        cursor::BinaryTree = descendleft(pa.right)
+    end
+
+    return (cursor, cursor)::Tuple{BinaryTree{T}, BinaryTree{T}}
+end
+
+Base.IteratorSize(::BinaryTree) = SizeUnknown()
+Base.IteratorEltype(::BinaryTree) = Base.HasEltype()
+Base.eltype(::BinaryTree{T}) where T = BinaryTree{T}
+
+## End Iteration
 
 child!(t::BinaryTree{T}, v::T, location::Symbol) where T = child!(t, BinaryTree(v), location)
 function child!(t::BinaryTree{T}, newnode::BinaryTree{T}, location::Symbol) where T
@@ -191,7 +220,7 @@ function adjacency_matrix(t::BinaryTree)
 end
 
 function show(io::IO, t::BinaryTree{T}) where T
-    print(io, "BinaryTree{$T}($(nodevalue(t))) $(objectid(t)) with $(length(children(t))) children")
+    print(io, "($(nodevalue(t))) $(string(objectid(t), base=16)) with $(length(children(t))) children")
     if isnothing(parent(t))
         print(io, " and no parent.")
     else
